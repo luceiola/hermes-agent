@@ -1,0 +1,29 @@
+model:
+  provider: openai
+  default: gpt-4.1-mini
+
+providers:
+  openai:
+    base_url: https://api.openai.com/v1
+    wire_api: responses
+    key_env: OPENAI_API_KEY
+
+agent:
+  max_iterations: 30
+
+display:
+  personality: neutral
+
+skills:
+  disabled: []
+  platform_disabled: {}
+
+telegram:
+  channel_prompts: {}
+
+slack:
+  channel_prompts: {}
+
+discord:
+  channel_prompts: {}
+  require_mention: true

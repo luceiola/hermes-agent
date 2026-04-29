@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HomeworkCompareOutput",
+  "type": "object",
+  "required": ["started_at", "finished_at", "outputs"],
+  "properties": {
+    "image_url": { "type": ["string", "null"] },
+    "image_file": { "type": ["string", "null"] },
+    "started_at": { "type": "string" },
+    "finished_at": { "type": "string" },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provider", "success", "elapsed_ms", "questions", "summary", "errors"],
+        "properties": {
+          "provider": { "type": "string" },
+          "success": { "type": "boolean" },
+          "elapsed_ms": { "type": "integer", "minimum": 0 },
+          "request_id": { "type": ["string", "null"] },
+          "raw_status": { "type": ["string", "null"] },
+          "trace_id": { "type": ["string", "null"] },
+          "task_id": { "type": ["string", "null"] },
+          "summary": { "type": "object" },
+          "errors": { "type": "array", "items": { "type": "string" } },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question_id": { "type": ["string", "null"] },
+                "recognized_text": { "type": ["string", "null"] },
+                "student_answer": { "type": ["string", "null"] },
+                "expected_answer": { "type": ["string", "null"] },
+                "is_correct": { "type": ["boolean", "null"] },
+                "score": { "type": ["number", "null"] },
+                "max_score": { "type": ["number", "null"] },
+                "reason": { "type": ["string", "null"] },
+                "analysis": { "type": ["string", "null"] },
+                "bbox": { "type": ["object", "null"] },
+                "confidence": { "type": ["number", "null"] },
+                "tags": { "type": "array", "items": { "type": "string" } },
+                "extras": { "type": "object" }
+              }
+            }
+          },
+          "raw_payload": {}
+        }
+      }
+    }
+  }
+}

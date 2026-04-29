@@ -1,0 +1,14 @@
+.DS_Store
+*.log
+*.pid
+__pycache__/
+*.pyc
+
+.env
+.env.*
+!.env.example
+!.env.homework.example
+
+**/.env
+**/run/
+**/logs/

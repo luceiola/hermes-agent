@@ -1,0 +1,29 @@
+model:
+  provider: newapi
+  default: qwen3.5-plus
+
+providers:
+  newapi:
+    base_url: http://43.106.52.13:3000/v1
+    wire_api: responses
+    key_env: OPENAI_API_KEY
+
+agent:
+  max_iterations: 24
+
+display:
+  personality: neutral
+
+skills:
+  disabled: []
+  platform_disabled: {}
+
+telegram:
+  channel_prompts: {}
+
+slack:
+  channel_prompts: {}
+
+discord:
+  channel_prompts: {}
+  require_mention: true
