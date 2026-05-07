@@ -8,7 +8,9 @@ __pycache__/
 .env.*
 !.env.example
 !.env.homework.example
+!.env.vocab.example
 
 **/.env
 **/run/
 **/logs/
+artifacts/

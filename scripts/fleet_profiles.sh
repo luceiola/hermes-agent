@@ -3,8 +3,8 @@ set -euo pipefail
 
 ACTION="${1:-status}"
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PROFILES_RAW="${HERMES_PROFILES:-personal heidou mei}"
-DASHBOARD_PORT_MAP="${HERMES_DASHBOARD_PORT_MAP:-personal=9129,heidou=9130,mei=9131}"
+PROFILES_RAW="${HERMES_PROFILES:-personal heidou mei orchestrator}"
+DASHBOARD_PORT_MAP="${HERMES_DASHBOARD_PORT_MAP:-personal=9129,heidou=9130,mei=9131,orchestrator=9132}"
 START_DASHBOARD="${START_DASHBOARD:-1}"
 
 read -r -a PROFILES <<<"$PROFILES_RAW"

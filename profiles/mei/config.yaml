@@ -1,12 +1,12 @@
 model:
   provider: newapi
-  default: qwen3.5-plus
+  default: ${MODEL}
 
 providers:
   newapi:
-    base_url: http://43.106.52.13:3000/v1
+    base_url: ${BASE_URL}
     wire_api: responses
-    key_env: OPENAI_API_KEY
+    key_env: API_KEY
 
 agent:
   max_iterations: 24

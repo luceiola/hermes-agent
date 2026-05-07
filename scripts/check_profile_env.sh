@@ -20,6 +20,26 @@ ERRORS=()
 WARNINGS=()
 PRIMARY_PLATFORM=""
 
+is_profile_gateway_running() {
+  local profile_name="$1"
+  local profiles_home="${HERMES_HOME_BASE:-$HOME/.hermes/profiles}"
+  local pid_file="$profiles_home/$profile_name/run/gateway.pid"
+  local pid=""
+
+  if [ -f "$pid_file" ]; then
+    pid="$(cat "$pid_file" 2>/dev/null || true)"
+    if [ -n "$pid" ] && ps -p "$pid" >/dev/null 2>&1; then
+      return 0
+    fi
+  fi
+
+  if pgrep -f "hermes_cli.main --profile $profile_name gateway run" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  return 1
+}
+
 require_key() {
   local key="$1"
   local val="${!key:-}"
@@ -114,7 +134,9 @@ validate_feishu() {
 
         candidate_app_id="$(awk -F= '/^FEISHU_APP_ID=/{print $2; exit}' "$candidate_env" | tr -d '[:space:]')"
         if [ -n "$candidate_app_id" ] && [ "$candidate_app_id" = "${FEISHU_APP_ID}" ]; then
-          WARNINGS+=("FEISHU_APP_ID is shared with profile '$candidate_profile' ($candidate_env); concurrent gateway runs may conflict")
+          if is_profile_gateway_running "$candidate_profile"; then
+            WARNINGS+=("FEISHU_APP_ID is shared with running profile '$candidate_profile' ($candidate_env); concurrent gateway runs may conflict")
+          fi
         fi
       done
     fi
@@ -183,14 +205,28 @@ case "$PRIMARY_PLATFORM" in
 esac
 
 HAS_MODEL_KEY=0
-for key in OPENAI_API_KEY OPENROUTER_API_KEY ANTHROPIC_API_KEY DEEPSEEK_API_KEY GEMINI_API_KEY AZURE_OPENAI_API_KEY ARK_API_KEY; do
+for key in API_KEY OPENROUTER_API_KEY ANTHROPIC_API_KEY DEEPSEEK_API_KEY GEMINI_API_KEY AZURE_OPENAI_API_KEY ARK_API_KEY; do
   if [ -n "${!key:-}" ]; then
     HAS_MODEL_KEY=1
     break
   fi
 done
 if [ "$HAS_MODEL_KEY" -eq 0 ]; then
-  MISSING+=("OPENAI_API_KEY(or another provider key)")
+  MISSING+=("API_KEY(or another provider key)")
+fi
+
+CONFIG_FILE="$PROFILE_ROOT/config.yaml"
+if [ -f "$CONFIG_FILE" ]; then
+  REQUIRED_KEY_ENV="$(awk -F': ' '/key_env:/{print $2; exit}' "$CONFIG_FILE" | tr -d '"' | xargs)"
+  if [ -n "$REQUIRED_KEY_ENV" ] && [ -z "${!REQUIRED_KEY_ENV:-}" ]; then
+    MISSING+=("$REQUIRED_KEY_ENV")
+  fi
+  if rg -q '\$\{BASE_URL\}' "$CONFIG_FILE" && [ -z "${BASE_URL:-}" ]; then
+    MISSING+=("BASE_URL")
+  fi
+  if rg -q '\$\{MODEL\}' "$CONFIG_FILE" && [ -z "${MODEL:-}" ]; then
+    MISSING+=("MODEL")
+  fi
 fi
 
 if [ "${#MISSING[@]}" -gt 0 ]; then

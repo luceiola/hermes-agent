@@ -1,6 +1,6 @@
 # 启动命令说明（hermes-personal）
 
-本文档用于多 profile Hermes Runtime（`personal` / `heidou` / `mei`）的启动、停止、状态检查与常见运维操作。
+本文档用于多 profile Hermes Runtime（`personal` / `heidou` / `mei` / `orchestrator` / `video`）的启动、停止、状态检查与常见运维操作。
 
 ## 0. 前置条件
 - `hermes-agent` 已可用（默认路径：`/Users/lucas/Documents/hermes-agent`）
@@ -12,6 +12,8 @@ cd /Users/lucas/Documents/hermes-personal
 scripts/setup_profile.sh personal
 scripts/setup_profile.sh heidou
 scripts/setup_profile.sh mei
+scripts/setup_profile.sh orchestrator
+scripts/setup_profile.sh video
 ```
 
 初始化完成后会生成：
@@ -20,6 +22,8 @@ scripts/setup_profile.sh mei
 - `~/.hermes/profiles/personal/SOUL.md`
 - `~/.hermes/profiles/heidou/*`
 - `~/.hermes/profiles/mei/*`
+- `~/.hermes/profiles/orchestrator/*`
+- `~/.hermes/profiles/video/*`
 
 ## 2. 配置环境变量
 编辑：`~/.hermes/profiles/personal/.env`
@@ -27,7 +31,9 @@ scripts/setup_profile.sh mei
 至少需要填写：
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
-- `OPENAI_API_KEY`（或其他模型厂商 key）
+- `API_KEY`
+- `BASE_URL`
+- `MODEL`（建议 `qwen3.6-plus`）
 
 可选：
 - `FEISHU_CONNECTION_MODE=websocket`（默认，推荐）
@@ -80,6 +86,8 @@ cd /Users/lucas/Documents/hermes-personal
 HERMES_PROFILE=personal scripts/sync_profile.sh
 HERMES_PROFILE=heidou scripts/sync_profile.sh
 HERMES_PROFILE=mei scripts/sync_profile.sh
+HERMES_PROFILE=orchestrator scripts/sync_profile.sh
+HERMES_PROFILE=video scripts/sync_profile.sh
 ```
 
 仅同步不重启：
@@ -88,18 +96,15 @@ cd /Users/lucas/Documents/hermes-personal
 HERMES_PROFILE=personal RESTART_GATEWAY=0 RESTART_DASHBOARD=0 scripts/sync_profile.sh
 ```
 
-## 7. 与现有 hermes-runtime 并行运行
-为了不冲突，请保持以下项不同：
-- Profile：`personal`（本项目） vs `orchestrator`（旧项目）
-- 飞书 App：不要复用同一个 `FEISHU_APP_ID`
-- Dashboard 端口：本项目默认 `9129`，旧项目默认 `9119`
-- webhook 端口：本项目默认 `8865`
+## 7. 统一管理 5 个 profile
+本仓库可直接统一管理：`personal`、`heidou`、`mei`、`orchestrator`、`video`。
 
-查看两套实例状态：
-```bash
-HERMES_PROFILE=personal /Users/lucas/Documents/hermes-personal/scripts/gateway_profile.sh status
-HERMES_PROFILE=orchestrator /Users/lucas/Documents/hermes-runtime/scripts/gateway_profile.sh status
-```
+默认 Dashboard 端口建议：
+- `personal=9129`
+- `heidou=9130`
+- `mei=9131`
+- `orchestrator=9132`
+- `video=9133`
 
 ## 8. 最短启动路径（可直接复制）
 ```bash
@@ -109,7 +114,7 @@ HERMES_PROFILE=personal scripts/check_profile_env.sh
 HERMES_PROFILE=personal scripts/gateway_profile.sh start
 ```
 
-## 9. 三实例批量启停
+## 9. 五实例批量启停
 ```bash
 cd /Users/lucas/Documents/hermes-personal
 scripts/fleet_profiles.sh start
